@@ -1,12 +1,15 @@
 import React, { FunctionComponent, useState } from 'react'
 
 import { ParsedFiles } from '../types'
+import { Spinner } from './spinner'
 
 interface Props {
   onParse: (files: ParsedFiles) => void
 }
 
 export const StepOne: FunctionComponent<Props> = ({ onParse }) => {
+  const [loading, setLoading] = useState(false)
+
   const [bank, setBank] = useState<File>()
   const [books, setBooks] = useState<File>()
 
@@ -25,12 +28,16 @@ export const StepOne: FunctionComponent<Props> = ({ onParse }) => {
           body.append('bank', bank)
           body.append('books', books)
 
+          setLoading(true)
+
           const response = await fetch('/api/upload', {
             body,
             method: 'POST'
           })
 
           const json = await response.json()
+
+          setLoading(false)
 
           onParse(json)
         }}>
@@ -64,9 +71,13 @@ export const StepOne: FunctionComponent<Props> = ({ onParse }) => {
             type="file"
           />
         </label>
-        <button className="mt-8 rounded-full shadow-sm bg-gradient-to-br from-green-100 to-green-200 py-2 px-4 font-medium">
-          Upload
-        </button>
+        {loading ? (
+          <Spinner className="mt-8" />
+        ) : (
+          <button className="mt-8 rounded-full shadow-sm bg-gradient-to-br from-green-100 to-green-200 py-2 px-4 font-medium">
+            Upload
+          </button>
+        )}
       </form>
     </>
   )

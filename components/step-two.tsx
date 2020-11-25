@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from 'react'
 
 import { ParsedBank, ParsedBooks, ReconciledData } from '../types'
+import { Spinner } from './spinner'
 
 interface Props {
   bank: ParsedBank
@@ -14,6 +15,8 @@ export const StepTwo: FunctionComponent<Props> = ({
   books,
   onReconile
 }) => {
+  const [loading, setLoading] = useState(false)
+
   const [bankAmountField, setBankAmountField] = useState<string>()
   const [bankDateField, setBankDateField] = useState<string>()
 
@@ -144,30 +147,38 @@ export const StepTwo: FunctionComponent<Props> = ({
         ))}
       </div>
 
-      <button
-        className="mt-8 rounded-full shadow-sm bg-gradient-to-br from-green-100 to-green-200 py-2 px-4 font-medium"
-        onClick={async () => {
-          const response = await fetch('/api/reconcile', {
-            body: JSON.stringify({
-              bank,
-              bankAmountField,
-              bankDateField,
-              books,
-              booksAmountField,
-              booksDateField
-            }),
-            headers: {
-              'content-type': 'application/json'
-            },
-            method: 'POST'
-          })
+      {loading ? (
+        <Spinner className="mt-8" />
+      ) : (
+        <button
+          className="mt-8 rounded-full shadow-sm bg-gradient-to-br from-green-100 to-green-200 py-2 px-4 font-medium"
+          onClick={async () => {
+            setLoading(true)
 
-          const json = await response.json()
+            const response = await fetch('/api/reconcile', {
+              body: JSON.stringify({
+                bank,
+                bankAmountField,
+                bankDateField,
+                books,
+                booksAmountField,
+                booksDateField
+              }),
+              headers: {
+                'content-type': 'application/json'
+              },
+              method: 'POST'
+            })
 
-          onReconile(json)
-        }}>
-        Reconcile
-      </button>
+            const json = await response.json()
+
+            setLoading(false)
+
+            onReconile(json)
+          }}>
+          Reconcile
+        </button>
+      )}
     </>
   )
 }

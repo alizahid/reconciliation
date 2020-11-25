@@ -1,4 +1,5 @@
 export { Header } from './header'
+export { Spinner } from './spinner'
 export { StepOne } from './step-one'
 export { StepThree } from './step-three'
 export { StepTwo } from './step-two'
