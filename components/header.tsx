@@ -13,7 +13,7 @@ export const Header: FunctionComponent<Props> = ({ onReset, reset }) => (
       <button
         className="rounded-full shadow-sm bg-red-200 py-2 px-4 font-medium"
         onClick={() => onReset()}>
-        Reset
+        Start over
       </button>
     )}
   </header>
